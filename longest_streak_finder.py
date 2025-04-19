@@ -1,6 +1,7 @@
 import numpy as np
 import csv
 from datetime import datetime
+import os
 
 def flip_until_streak_numpy(streak_target):
     max_batch = 10_000_000  # process in big batches
@@ -25,10 +26,15 @@ def flip_until_streak_numpy(streak_target):
 
     return total_flips
 
-def run_multiple_simulations(num_runs=100, max_streak=25):
+def run_multiple_simulations(num_runs=1000, max_streak=20):
+    # Create results directory with today's date
+    today = datetime.now().strftime("%Y%m%d")
+    results_dir = f"results_{today}"
+    os.makedirs(results_dir, exist_ok=True)
+    
     # Create CSV filename with timestamp
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f'streak_simulation_results_{timestamp}.csv'
+    timestamp = datetime.now().strftime("%H%M%S")
+    filename = os.path.join(results_dir, f'streak_simulation_results_{timestamp}.csv')
     
     # Open CSV file for writing
     with open(filename, 'w', newline='') as csvfile:
@@ -45,6 +51,14 @@ def run_multiple_simulations(num_runs=100, max_streak=25):
                 writer.writerow([run, streak_target, total_flips])
     
     print(f"\nResults have been saved to {filename}")
+    return results_dir
 
 # Run the simulations
-run_multiple_simulations() 
+if __name__ == "__main__":
+    # Run 100 simulations
+    print("Running 100 simulations...")
+    results_dir_100 = run_multiple_simulations(num_runs=100, max_streak=20)
+    
+    # Run 1000 simulations
+    print("\nRunning 1000 simulations...")
+    results_dir_1000 = run_multiple_simulations(num_runs=1000, max_streak=20) 

@@ -3,17 +3,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import glob
 import os
+from datetime import datetime
+from scipy.optimize import curve_fit
 
-def load_latest_csv():
-    # Find the most recent CSV file
-    csv_files = glob.glob('streak_simulation_results_*.csv')
-    if not csv_files:
-        raise FileNotFoundError("No simulation results CSV files found")
-    
-    latest_file = max(csv_files, key=os.path.getctime)
-    return pd.read_csv(latest_file)
+def load_specific_csv(file_path):
+    return pd.read_csv(file_path)
 
-def create_individual_runs_plot(df, max_streak, suffix=''):
+def create_individual_runs_plot(df, max_streak, results_dir, suffix=''):
     plt.figure(figsize=(12, 8))
     
     # Filter data for the specified range
@@ -23,16 +19,16 @@ def create_individual_runs_plot(df, max_streak, suffix=''):
     for run in df_filtered['Run'].unique():
         run_data = df_filtered[df_filtered['Run'] == run]
         plt.plot(run_data['Streak Target'], run_data['Flips Required'], 
-                color='lightblue', alpha=0.3, linewidth=1)
+                color='lightblue', alpha=0.1, linewidth=1)
     
-    plt.title(f'Number of Flips Required for Each Streak Length\n(All 100 Runs, n=1 to {max_streak})')
+    plt.title(f'Number of Flips Required for Each Streak Length\n(All {len(df_filtered["Run"].unique())} Runs, n=1 to {max_streak})')
     plt.xlabel('Streak Length (n)')
     plt.ylabel('Number of Flips Required')
     plt.grid(True, alpha=0.3)
-    plt.savefig(f'individual_runs{suffix}.png')
+    plt.savefig(os.path.join(results_dir, f'individual_runs{suffix}.png'))
     plt.close()
 
-def create_median_plot(df, max_streak, suffix=''):
+def create_median_plot(df, max_streak, results_dir, suffix=''):
     plt.figure(figsize=(12, 8))
     
     # Filter data for the specified range
@@ -56,10 +52,10 @@ def create_median_plot(df, max_streak, suffix=''):
     plt.ylabel('Number of Flips Required')
     plt.grid(True, alpha=0.3)
     plt.legend()
-    plt.savefig(f'median_plot{suffix}.png')
+    plt.savefig(os.path.join(results_dir, f'median_plot{suffix}.png'))
     plt.close()
 
-def create_combined_plot(df, max_streak, suffix=''):
+def create_combined_plot(df, max_streak, results_dir, suffix=''):
     plt.figure(figsize=(12, 8))
     
     # Filter data for the specified range
@@ -69,7 +65,7 @@ def create_combined_plot(df, max_streak, suffix=''):
     for run in df_filtered['Run'].unique():
         run_data = df_filtered[df_filtered['Run'] == run]
         plt.plot(run_data['Streak Target'], run_data['Flips Required'], 
-                color='lightblue', alpha=0.3, linewidth=1)
+                color='lightblue', alpha=0.1, linewidth=1)
     
     # Calculate and plot median
     median_data = df_filtered.groupby('Streak Target')['Flips Required'].median()
@@ -87,22 +83,22 @@ def create_combined_plot(df, max_streak, suffix=''):
     plt.ylabel('Number of Flips Required')
     plt.grid(True, alpha=0.3)
     plt.legend()
-    plt.savefig(f'combined_plot{suffix}.png')
+    plt.savefig(os.path.join(results_dir, f'combined_plot{suffix}.png'))
     plt.close()
 
-def create_trimmed_plot(df, max_streak, suffix=''):
+def create_trimmed_plot(df, max_streak, results_dir, suffix=''):
     plt.figure(figsize=(12, 8))
     
     # Filter data for the specified range
     df_filtered = df[df['Streak Target'] <= max_streak]
     
-    # Calculate trimmed mean (excluding 5 highest and 5 lowest values) for each streak length
+    # Calculate trimmed mean (excluding 50 highest and 50 lowest values) for each streak length
     trimmed_means = []
     for n in range(1, max_streak + 1):
         values = df_filtered[df_filtered['Streak Target'] == n]['Flips Required'].values
-        # Sort values and remove 5 highest and 5 lowest
+        # Sort values and remove 50 highest and 50 lowest
         sorted_values = np.sort(values)
-        trimmed_values = sorted_values[5:-5]  # Remove first and last 5 values
+        trimmed_values = sorted_values[50:-50]  # Remove first and last 50 values
         trimmed_means.append(np.mean(trimmed_values))
     
     # Plot theoretical function y = 2^n
@@ -120,44 +116,127 @@ def create_trimmed_plot(df, max_streak, suffix=''):
     plt.plot(n_values, trimmed_means, 
             color='orange', linewidth=2, label='Trimmed Mean (90% of data)')
     
-    plt.title(f'Comparison of Theoretical, Median, and Trimmed Mean\n(n=1 to {max_streak}, excluding 10 most extreme values)')
+    plt.title(f'Comparison of Theoretical, Median, and Trimmed Mean\n(n=1 to {max_streak}, excluding 100 most extreme values)')
     plt.xlabel('Streak Length (n)')
     plt.ylabel('Number of Flips Required')
     plt.grid(True, alpha=0.3)
     plt.legend()
-    plt.savefig(f'trimmed_plot{suffix}.png')
+    plt.savefig(os.path.join(results_dir, f'trimmed_plot{suffix}.png'))
     plt.close()
 
+def calculate_statistics(df, max_streak):
+    """Calculate statistical differences from theoretical values."""
+    stats = {}
+    
+    # Filter data for the specified range
+    df_filtered = df[df['Streak Target'] <= max_streak]
+    
+    # Calculate median for each streak length
+    median_data = df_filtered.groupby('Streak Target')['Flips Required'].median()
+    
+    # Calculate theoretical values
+    n_values = np.arange(1, max_streak + 1)
+    theoretical_values = 2 ** n_values
+    
+    # Calculate percentage differences
+    percentage_diff = ((median_data.values - theoretical_values) / theoretical_values) * 100
+    
+    # Calculate mean absolute percentage error (MAPE)
+    mape = np.mean(np.abs(percentage_diff))
+    
+    # Fit a function of the form a * 2^(b*n + c)
+    def theoretical_func(n, a, b, c):
+        return a * (2 ** (b * n + c))
+    
+    # Fit the function to the median data
+    popt, pcov = curve_fit(theoretical_func, n_values, median_data.values, p0=[1, 1, 0])
+    
+    stats['median_values'] = median_data.values
+    stats['theoretical_values'] = theoretical_values
+    stats['percentage_diff'] = percentage_diff
+    stats['mape'] = mape
+    stats['fitted_params'] = popt
+    stats['fitted_function'] = f"{popt[0]:.2f} * 2^({popt[1]:.2f}*n + {popt[2]:.2f})"
+    
+    return stats
+
+def create_statistical_summary(df_100, df_1000, max_streak):
+    """Create a summary of statistical findings."""
+    stats_100 = calculate_statistics(df_100, max_streak)
+    stats_1000 = calculate_statistics(df_1000, max_streak)
+    
+    summary = f"""# Statistical Analysis Summary
+
+## 100 Runs Analysis
+- Mean Absolute Percentage Error (MAPE): {stats_100['mape']:.2f}%
+- Fitted Function: y = {stats_100['fitted_function']}
+
+## 1000 Runs Analysis
+- Mean Absolute Percentage Error (MAPE): {stats_1000['mape']:.2f}%
+- Fitted Function: y = {stats_1000['fitted_function']}
+
+## Key Findings
+1. The theoretical function (2^n) tends to underestimate the actual number of flips required.
+2. The fitted functions show that the actual relationship is more complex than the simple theoretical model.
+3. The 1000-run analysis provides a more accurate estimate of the true relationship.
+"""
+    
+    return summary
+
 def main():
-    # Load the data
-    df = load_latest_csv()
+    # Create directories for results
+    results_dir_100 = "results_20250417_100"
+    results_dir_1000 = "results_20250418_1000"
+    os.makedirs(results_dir_100, exist_ok=True)
+    os.makedirs(results_dir_1000, exist_ok=True)
     
-    # Create plots for n=1 to 25
-    print("Creating plots for n=1 to 25...")
-    create_individual_runs_plot(df, 25)
-    create_median_plot(df, 25)
-    create_combined_plot(df, 25)
-    create_trimmed_plot(df, 25)
+    # Load specific CSV files
+    print("Analyzing 100 runs...")
+    df_100 = load_specific_csv("streak_simulation_results_20250417_180749.csv")
+    create_individual_runs_plot(df_100, 20, results_dir_100)
+    create_median_plot(df_100, 20, results_dir_100)
+    create_combined_plot(df_100, 20, results_dir_100)
+    create_trimmed_plot(df_100, 20, results_dir_100)
     
-    # Create plots for n=1 to 10
-    print("\nCreating plots for n=1 to 10...")
-    create_individual_runs_plot(df, 10, '_n10')
-    create_median_plot(df, 10, '_n10')
-    create_combined_plot(df, 10, '_n10')
-    create_trimmed_plot(df, 10, '_n10')
+    # Create plots for n=1 to 10 for 100 runs
+    create_individual_runs_plot(df_100, 10, results_dir_100, '_n10')
+    create_median_plot(df_100, 10, results_dir_100, '_n10')
+    create_combined_plot(df_100, 10, results_dir_100, '_n10')
+    create_trimmed_plot(df_100, 10, results_dir_100, '_n10')
     
-    print("\nAll plots have been saved as PNG files:")
-    print("\nFor n=1 to 25:")
+    # Analyze 1000 runs
+    print("\nAnalyzing 1000 runs...")
+    df_1000 = load_specific_csv("streak_simulation_results_20250418_202140.csv")
+    create_individual_runs_plot(df_1000, 20, results_dir_1000)
+    create_median_plot(df_1000, 20, results_dir_1000)
+    create_combined_plot(df_1000, 20, results_dir_1000)
+    create_trimmed_plot(df_1000, 20, results_dir_1000)
+    
+    # Create plots for n=1 to 10 for 1000 runs
+    create_individual_runs_plot(df_1000, 10, results_dir_1000, '_n10')
+    create_median_plot(df_1000, 10, results_dir_1000, '_n10')
+    create_combined_plot(df_1000, 10, results_dir_1000, '_n10')
+    create_trimmed_plot(df_1000, 10, results_dir_1000, '_n10')
+    
+    # Generate statistical summary
+    summary = create_statistical_summary(df_100, df_1000, 20)
+    with open("statistical_summary.md", "w") as f:
+        f.write(summary)
+    
+    print("\nAll plots have been saved in their respective directories:")
+    print(f"\nFor 100 runs (in {results_dir_100}):")
     print("- individual_runs.png: Shows all 100 runs")
     print("- median_plot.png: Shows the median values and theoretical function")
     print("- combined_plot.png: Shows individual runs, median, and theoretical function")
-    print("- trimmed_plot.png: Shows theoretical, median, and trimmed mean (excluding 10 extreme values)")
+    print("- trimmed_plot.png: Shows theoretical, median, and trimmed mean (excluding 100 extreme values)")
     
-    print("\nFor n=1 to 10:")
-    print("- individual_runs_n10.png: Shows all 100 runs")
-    print("- median_plot_n10.png: Shows the median values and theoretical function")
-    print("- combined_plot_n10.png: Shows individual runs, median, and theoretical function")
-    print("- trimmed_plot_n10.png: Shows theoretical, median, and trimmed mean (excluding 10 extreme values)")
+    print(f"\nFor 1000 runs (in {results_dir_1000}):")
+    print("- individual_runs.png: Shows all 1000 runs")
+    print("- median_plot.png: Shows the median values and theoretical function")
+    print("- combined_plot.png: Shows individual runs, median, and theoretical function")
+    print("- trimmed_plot.png: Shows theoretical, median, and trimmed mean (excluding 100 extreme values)")
+    
+    print("\nStatistical summary has been saved to statistical_summary.md")
 
 if __name__ == "__main__":
     main() 

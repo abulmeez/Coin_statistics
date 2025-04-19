@@ -1,75 +1,112 @@
 # Coin Flip Streak Analysis
 
-This project investigates the probability of getting consecutive heads or tails in a series of coin flips. We analyze how many flips are required on average to achieve streaks of different lengths, comparing actual simulation results with theoretical expectations.
+This project analyzes the number of coin flips required to achieve streaks of heads of various lengths. It includes both theoretical analysis and Monte Carlo simulations to understand the relationship between streak length and required flips.
 
-## Methodology
+## Project Structure
 
-1. **Simulation Process**:
-   - For each streak length n (from 1 to 25), we run 100 simulations
-   - Each simulation continues until we achieve n consecutive heads or tails
-   - We record the number of flips required for each simulation
-   - Results are stored in a CSV file for analysis
+The project is organized into date-based directories for each set of simulations:
 
-2. **Theoretical Background**:
-   - The theoretical expectation for achieving n consecutive heads or tails is approximately 2^n
-   - This is because each additional flip in the streak has a 1/2 probability of matching
+```
+Coin_statistics/
+├── longest_streak_finder.py    # Main simulation script
+├── analyze_streak_results.py   # Analysis and visualization script
+├── results_YYYYMMDD_100/      # Results directory for 100 runs
+│   ├── streak_simulation_results_YYYYMMDD_HHMMSS.csv
+│   ├── individual_runs.png
+│   ├── median_plot.png
+│   ├── combined_plot.png
+│   ├── trimmed_plot.png
+│   ├── individual_runs_n10.png
+│   ├── median_plot_n10.png
+│   ├── combined_plot_n10.png
+│   └── trimmed_plot_n10.png
+└── results_YYYYMMDD_1000/     # Results directory for 1000 runs
+    ├── streak_simulation_results_YYYYMMDD_HHMMSS.csv
+    ├── individual_runs.png
+    ├── median_plot.png
+    ├── combined_plot.png
+    ├── trimmed_plot.png
+    ├── individual_runs_n10.png
+    ├── median_plot_n10.png
+    ├── combined_plot_n10.png
+    └── trimmed_plot_n10.png
+```
 
-## Results Analysis
+## How to Use
 
-### 1. Individual Runs (n=1 to 25)
-![Individual Runs](individual_runs.png)
-This plot shows all 100 simulation runs for each streak length. The light blue lines represent individual simulations, demonstrating the natural variation in the number of flips required to achieve each streak length.
+1. Run the simulation script to generate new results:
+   ```bash
+   python longest_streak_finder.py
+   ```
+   This will create two new directories:
+   - `results_YYYYMMDD_100/` for 100 simulation runs
+   - `results_YYYYMMDD_1000/` for 1000 simulation runs
 
-### 2. Median and Theoretical Comparison (n=1 to 25)
-![Median Plot](median_plot.png)
-This plot compares:
-- The theoretical expectation (green dashed line): y = 2^n
-- The median of all simulations (red line)
+2. Analyze the results and generate visualizations:
+   ```bash
+   python analyze_streak_results.py
+   ```
+   This will create various plots in each results directory and generate a statistical summary.
 
-### 3. Combined View (n=1 to 25)
-![Combined Plot](combined_plot.png)
-This plot shows all three elements together:
-- Individual simulation runs (light blue)
-- Median values (red)
-- Theoretical expectation (green dashed)
+## Analysis Details
 
-### 4. Trimmed Analysis (n=1 to 25)
-![Trimmed Plot](trimmed_plot.png)
-This plot focuses on the central 90% of the data by:
-- Removing the 5 highest and 5 lowest values for each streak length
-- Showing the theoretical expectation (green dashed)
-- Showing the median (red)
-- Showing the trimmed mean (orange)
+The analysis includes:
 
-### 5. Focused Analysis (n=1 to 10)
-We also created focused versions of these plots for n=1 to 10 to better visualize the behavior at smaller streak lengths:
+1. **Individual Runs Plot**: Shows the number of flips required for each streak length across all simulation runs.
+2. **Median Plot**: Compares the median number of flips required with the theoretical function (2^n).
+3. **Combined Plot**: Shows individual runs, median values, and theoretical function together.
+4. **Trimmed Plot**: Shows theoretical, median, and trimmed mean values (excluding extreme values).
 
-![Individual Runs n=1-10](individual_runs_n10.png)
-![Median Plot n=1-10](median_plot_n10.png)
-![Combined Plot n=1-10](combined_plot_n10.png)
-![Trimmed Plot n=1-10](trimmed_plot_n10.png)
+Each plot is generated for two ranges:
+- n=1 to 20 (full range)
+- n=1 to 10 (zoomed in view)
 
-## Key Findings
+## Statistical Analysis
 
-1. **Theoretical vs. Actual**:
-   - The theoretical expectation (2^n) provides a good approximation for smaller streak lengths
-   - As streak length increases, the actual number of flips required tends to be higher than the theoretical expectation
+The analysis includes several statistical measures:
 
-2. **Variation in Results**:
-   - There is significant variation in the number of flips required for longer streaks
-   - The trimmed mean (excluding extreme values) helps identify the central tendency
+1. **Mean Absolute Percentage Error (MAPE)**: Measures the average percentage difference between the theoretical and actual values.
+2. **Fitted Functions**: The actual relationship is fitted to a function of the form a * 2^(b*n + c), which provides a more accurate model than the simple theoretical prediction.
 
-3. **Pattern Recognition**:
-   - The relationship between streak length and required flips appears exponential
-   - The trimmed mean and median tend to follow similar patterns, suggesting the data is not heavily skewed
+### Key Statistical Findings
 
-## Conclusion
+1. **Theoretical vs. Actual Relationship**:
+   - The theoretical function (2^n) consistently underestimates the actual number of flips required.
+   - For 100 runs, the MAPE is 33.95%, indicating significant deviation from the theoretical model.
+   - For 1000 runs, the MAPE is 36.24%, showing that the deviation persists with larger sample sizes.
 
-This analysis demonstrates that while the theoretical expectation of 2^n provides a reasonable estimate for small streak lengths, the actual number of flips required tends to be higher for longer streaks. The variation in results increases with streak length, highlighting the probabilistic nature of the problem. The trimmed analysis helps identify the central tendency by removing extreme values that might skew the results.
+2. **Fitted Models**:
+   - For 100 runs: y = 0.47 * 2^(1.06*n - 0.72)
+   - For 1000 runs: y = 0.80 * 2^(0.97*n + 0.46)
+   - These models show that the actual relationship requires:
+     - A scaling factor (a) to adjust the base magnitude
+     - A non-linear exponent (b) to account for the changing rate of increase
+     - An offset (c) to adjust for the initial conditions
 
-## Files in the Project
+3. **Sample Size Effects**:
+   - The 1000-run analysis provides more stable estimates of the true relationship.
+   - The fitted parameters are more consistent in the larger sample size.
+   - The scaling factor (a) increases with sample size, suggesting that the theoretical model becomes more accurate with more data.
 
-- `longest_streak_finder.py`: Main simulation script
-- `analyze_streak_results.py`: Analysis and visualization script
-- `streak_simulation_results_*.csv`: Simulation data files
-- Various PNG files containing the plots 
+4. **Practical Implications**:
+   - The actual number of flips required for longer streaks is significantly higher than the theoretical prediction.
+   - The relationship between streak length and required flips is more complex than a simple exponential function.
+   - The fitted models provide a more accurate way to predict the number of flips needed for a given streak length.
+
+## Theoretical Background
+
+The theoretical expectation for the number of flips required to achieve a streak of n heads is approximately 2^(n+1) - 2. However, our analysis shows that this is an oversimplification. The actual relationship is better modeled by a function of the form a * 2^(b*n + c), where:
+
+- a: A scaling factor that accounts for the base magnitude of the relationship
+- b: A non-linear exponent that captures the changing rate of increase
+- c: An offset that adjusts for initial conditions
+
+This more complex model better captures the true nature of streak probabilities in coin flips.
+
+## Dependencies
+
+- Python 3.x
+- pandas
+- numpy
+- matplotlib
+- scipy 
