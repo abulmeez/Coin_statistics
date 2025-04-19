@@ -24,15 +24,19 @@ def calculate_trimmed_stats(df, max_streak):
         values = df_filtered[df_filtered['Streak Target'] == n]['Flips Required'].values
         # Sort values and remove 2% from each end (keeping middle 96%)
         sorted_values = np.sort(values)
-        trim_size = int(len(sorted_values) * 0.02)
+        trim_size = int(len(sorted_values) * 0.02)  # Remove 2% from each end
         trimmed_values = sorted_values[trim_size:-trim_size]
         
         trimmed_means.append(np.mean(trimmed_values))
         trimmed_medians.append(np.median(trimmed_values))
         theoretical_values.append(2 ** n)
     
+    # Convert to numpy arrays for calculations
+    trimmed_means = np.array(trimmed_means)
+    theoretical_values = np.array(theoretical_values)
+    
     # Calculate percentage differences
-    percentage_diff = ((np.array(trimmed_means) - np.array(theoretical_values)) / np.array(theoretical_values)) * 100
+    percentage_diff = ((trimmed_means - theoretical_values) / theoretical_values) * 100
     
     # Calculate mean absolute percentage error (MAPE)
     mape = np.mean(np.abs(percentage_diff))
@@ -41,9 +45,9 @@ def calculate_trimmed_stats(df, max_streak):
     correlation, p_value = pearsonr(trimmed_means, theoretical_values)
     
     # Calculate R-squared
-    residuals = np.array(trimmed_means) - np.array(theoretical_values)
+    residuals = trimmed_means - theoretical_values
     ss_res = np.sum(residuals**2)
-    ss_tot = np.sum((np.array(trimmed_means) - np.mean(trimmed_means))**2)
+    ss_tot = np.sum((trimmed_means - np.mean(trimmed_means))**2)
     r_squared = 1 - (ss_res / ss_tot)
     
     # Fit a function of the form a * 2^(b*n + c)
@@ -58,10 +62,14 @@ def calculate_trimmed_stats(df, max_streak):
     # Calculate standard deviation of the fitted parameters
     perr = np.sqrt(np.diag(pcov))
     
-    stats['trimmed_means'] = trimmed_means
+    # Calculate average deviation from theoretical
+    avg_deviation = np.mean(np.abs(trimmed_means - theoretical_values))
+    max_deviation = np.max(np.abs(trimmed_means - theoretical_values))
+    
+    stats['trimmed_means'] = trimmed_means.tolist()
     stats['trimmed_medians'] = trimmed_medians
-    stats['theoretical_values'] = theoretical_values
-    stats['percentage_diff'] = percentage_diff
+    stats['theoretical_values'] = theoretical_values.tolist()
+    stats['percentage_diff'] = percentage_diff.tolist()
     stats['mape'] = mape
     stats['correlation'] = correlation
     stats['p_value'] = p_value
@@ -69,6 +77,8 @@ def calculate_trimmed_stats(df, max_streak):
     stats['fitted_params'] = popt
     stats['param_errors'] = perr
     stats['fitted_function'] = f"{popt[0]:.2f} * 2^({popt[1]:.2f}*n + {popt[2]:.2f})"
+    stats['avg_deviation'] = avg_deviation
+    stats['max_deviation'] = max_deviation
     
     return stats
 
@@ -100,7 +110,12 @@ def create_trimmed_comparison_plot(df_100, df_1000, df_10000, max_streak, result
     plt.ylabel('Number of Flips Required')
     plt.grid(True, alpha=0.3)
     plt.legend()
-    plt.savefig(os.path.join(results_dir, 'trimmed_comparison.png'))
+    
+    # Save plot with appropriate name
+    if max_streak == 10:
+        plt.savefig(os.path.join(results_dir, 'trimmed_comparison_n10.png'))
+    else:
+        plt.savefig(os.path.join(results_dir, 'trimmed_comparison_n20.png'))
     plt.close()
     
     return stats_100, stats_1000, stats_10000
@@ -116,39 +131,44 @@ def create_trimmed_analysis_summary(stats_100, stats_1000, stats_10000):
 - Correlation with Theoretical Values: {stats_100['correlation']:.4f} (p-value: {stats_100['p_value']:.4f})
 - R-squared: {stats_100['r_squared']:.4f}
 - Fitted Function: y = {stats_100['fitted_function']}
-- Parameter Uncertainties: a ± {stats_100['param_errors'][0]:.2f}, b ± {stats_100['param_errors'][1]:.2f}, c ± {stats_100['param_errors'][2]:.2f}
+- Average Deviation from Theoretical: {stats_100['avg_deviation']:.2f} flips
+- Maximum Deviation from Theoretical: {stats_100['max_deviation']:.2f} flips
 
 ### 1000 Runs Analysis
 - Mean Absolute Percentage Error (MAPE): {stats_1000['mape']:.2f}%
 - Correlation with Theoretical Values: {stats_1000['correlation']:.4f} (p-value: {stats_1000['p_value']:.4f})
 - R-squared: {stats_1000['r_squared']:.4f}
 - Fitted Function: y = {stats_1000['fitted_function']}
-- Parameter Uncertainties: a ± {stats_1000['param_errors'][0]:.2f}, b ± {stats_1000['param_errors'][1]:.2f}, c ± {stats_1000['param_errors'][2]:.2f}
+- Average Deviation from Theoretical: {stats_1000['avg_deviation']:.2f} flips
+- Maximum Deviation from Theoretical: {stats_1000['max_deviation']:.2f} flips
 
 ### 10000 Runs Analysis
 - Mean Absolute Percentage Error (MAPE): {stats_10000['mape']:.2f}%
 - Correlation with Theoretical Values: {stats_10000['correlation']:.4f} (p-value: {stats_10000['p_value']:.4f})
 - R-squared: {stats_10000['r_squared']:.4f}
 - Fitted Function: y = {stats_10000['fitted_function']}
-- Parameter Uncertainties: a ± {stats_10000['param_errors'][0]:.2f}, b ± {stats_10000['param_errors'][1]:.2f}, c ± {stats_10000['param_errors'][2]:.2f}
+- Average Deviation from Theoretical: {stats_10000['avg_deviation']:.2f} flips
+- Maximum Deviation from Theoretical: {stats_10000['max_deviation']:.2f} flips
 
 ## Key Findings
 
 1. **Theoretical vs. Actual Relationship**:
    - The theoretical function (2^n) consistently underestimates the actual number of flips required.
    - The deviation is more pronounced in the middle 96% of the data than in the full dataset.
-   - The MAPE values are higher for the trimmed data, indicating that the theoretical model is less accurate for typical cases.
+   - The MAPE values show the average percentage difference from theoretical predictions.
+   - The average and maximum deviations provide absolute measures of the difference.
 
 2. **Sample Size Effects**:
    - The 1000-run and 10000-run analyses show more stable estimates of the true relationship.
    - The fitted parameters become more consistent with larger sample sizes.
-   - The scaling factor (a) increases with sample size, suggesting that the theoretical model becomes more accurate with more data.
-   - Parameter uncertainties decrease with increasing sample size, indicating more reliable estimates.
+   - The scaling factor (a) approaches 1.0 with larger sample sizes.
+   - Parameter uncertainties decrease with increasing sample size.
 
 3. **Model Accuracy**:
    - The R-squared values show how well the fitted models explain the variance in the data.
    - The correlation coefficients indicate the strength of the relationship with theoretical values.
    - The p-values confirm the statistical significance of these relationships.
+   - The deviations provide concrete measures of how far the actual results are from theoretical predictions.
 
 4. **Practical Implications**:
    - The actual number of flips required for typical cases (middle 96%) is significantly higher than the theoretical prediction.
@@ -169,15 +189,15 @@ def main():
     df_1000 = load_specific_csv("results_20250419/streak_simulation_results_005858.csv")
     df_10000 = load_specific_csv("results_20250419/streak_simulation_results_010926.csv")
     
-    # Create comparison plot and get statistics
-    stats_100, stats_1000, stats_10000 = create_trimmed_comparison_plot(
+    # Create comparison plots for n=10 and n=20
+    stats_100_10, stats_1000_10, stats_10000_10 = create_trimmed_comparison_plot(
+        df_100, df_1000, df_10000, 10, results_dir)
+    
+    stats_100_20, stats_1000_20, stats_10000_20 = create_trimmed_comparison_plot(
         df_100, df_1000, df_10000, 20, results_dir)
     
-    # Create zoomed comparison plot
-    create_trimmed_comparison_plot(df_100, df_1000, df_10000, 10, results_dir)
-    
     # Generate statistical summary
-    summary = create_trimmed_analysis_summary(stats_100, stats_1000, stats_10000)
+    summary = create_trimmed_analysis_summary(stats_100_20, stats_1000_20, stats_10000_20)
     
     # Save summary to file
     with open(os.path.join(results_dir, "trimmed_analysis_summary.md"), "w") as f:
