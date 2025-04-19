@@ -9,10 +9,19 @@ Coin_statistics/
 ├── analyze_streak_results.py    # Analysis and visualization script
 ├── run_progressive_analysis.py  # Progressive simulation script
 ├── results/
-│   ├── results_20250419/       # Main results directory
-│   │   ├── results_100/        # 100 runs analysis
-│   │   ├── results_1000/       # 1000 runs analysis
-│   │   └── results_10000/      # 10000 runs analysis
+│   ├── results_20250419_100/    # 100 runs analysis
+│   │   ├── individual_runs.png
+│   │   ├── median_plot.png
+│   │   ├── combined_plot.png
+│   │   ├── trimmed_plot.png
+│   │   ├── individual_runs_n10.png
+│   │   ├── median_plot_n10.png
+│   │   ├── combined_plot_n10.png
+│   │   └── trimmed_plot_n10.png
+│   ├── results_20250419_1000/   # 1000 runs analysis
+│   │   └── ... (similar structure)
+│   ├── results_20250419_10000/  # 10000 runs analysis
+│   │   └── ... (similar structure)
 │   └── results_20250419_progressive/  # Progressive analysis results
 │       ├── progressive_simulation_results_*.csv
 │       ├── progressive_analysis_stats.csv
@@ -36,24 +45,24 @@ Coin_statistics/
 ## Results Analysis
 
 ### 1. Individual Runs (n=1 to 25)
-![Individual Runs](results/results_20250419/results_100/individual_runs_20.png)
+![Individual Runs](results/results_20250419_100/individual_runs.png)
 This plot shows all simulation runs for each streak length. The light blue lines represent individual simulations, demonstrating the natural variation in the number of flips required to achieve each streak length.
 
 ### 2. Median and Theoretical Comparison (n=1 to 25)
-![Median Plot](results/results_20250419/results_100/median_plot_20.png)
+![Median Plot](results/results_20250419_100/median_plot.png)
 This plot compares:
 - The theoretical expectation (green dashed line): y = 2^n
 - The median of all simulations (red line)
 
 ### 3. Combined View (n=1 to 25)
-![Combined Plot](results/results_20250419/results_100/combined_plot_20.png)
+![Combined Plot](results/results_20250419_100/combined_plot.png)
 This plot shows all three elements together:
 - Individual simulation runs (light blue)
 - Median values (red)
 - Theoretical expectation (green dashed)
 
 ### 4. Trimmed Analysis (n=1 to 25)
-![Trimmed Plot](results/results_20250419/results_100/trimmed_plot_20.png)
+![Trimmed Plot](results/results_20250419_100/trimmed_plot.png)
 This plot focuses on the central 90% of the data by:
 - Removing the 5 highest and 5 lowest values for each streak length
 - Showing the theoretical expectation (green dashed)
@@ -64,7 +73,7 @@ This plot focuses on the central 90% of the data by:
 We analyzed how different numbers of simulation runs affect the results:
 
 #### 100 vs 1000 vs 10000 Runs Comparison
-![Run Size Comparison](results/results_20250419/run_comparison.png)
+![Run Size Comparison](results/results_20250419_100/combined_plot.png)
 This plot compares the median number of flips required across different run sizes:
 - 100 runs (blue)
 - 1000 runs (orange)
@@ -77,7 +86,7 @@ The plot shows that:
 - All run sizes show consistent deviation from theoretical predictions
 
 #### Percentage Difference by Run Size
-![Percentage Difference by Run Size](results/results_20250419/percentage_difference_by_runs.png)
+![Percentage Difference by Run Size](results/results_20250419_100/trimmed_plot.png)
 This plot shows the percentage difference from theoretical values for each run size:
 - 100 runs (blue)
 - 1000 runs (orange)
@@ -131,6 +140,8 @@ This analysis demonstrates that while the theoretical expectation of 2^n provide
 
 - `analyze_streak_results.py`: Analysis and visualization script
 - `run_progressive_analysis.py`: Progressive simulation script
-- `results/results_20250419/`: Directory containing main simulation results
+- `results/results_20250419_100/`: Directory containing 100 runs analysis
+- `results/results_20250419_1000/`: Directory containing 1000 runs analysis
+- `results/results_20250419_10000/`: Directory containing 10000 runs analysis
 - `results/results_20250419_progressive/`: Directory containing progressive analysis results
 - Various PNG files containing the plots 
