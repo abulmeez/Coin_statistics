@@ -61,13 +61,44 @@ This plot shows all three elements together:
 - Median values (red)
 - Theoretical expectation (green dashed)
 
-### 4. Trimmed Analysis (n=1 to 25)
+### 4. Trimmed Analysis
+We performed two types of trimmed analysis to better understand the central tendencies in our data:
+
+#### 4.1 Basic Trimmed Analysis (90% of data)
 ![Trimmed Plot](results/results_20250419_100/trimmed_plot.png)
 This plot focuses on the central 90% of the data by:
-- Removing the 5 highest and 5 lowest values for each streak length
-- Showing the theoretical expectation (green dashed)
+- Removing the 5% highest and 5% lowest values for each streak length
+- Showing the theoretical expectation (red dashed)
 - Showing the median (red)
 - Showing the trimmed mean (orange)
+
+#### 4.2 Detailed Trimmed Analysis
+![Trimmed Comparison](results/results_20250419_trimmed/trimmed_comparison.png)
+This more detailed analysis compares:
+- Theoretical expectation (2^n, green dashed line)
+- Median values (red line)
+- Trimmed Mean (90% of data, orange line)
+
+The plot clearly shows that:
+- Both median and trimmed mean consistently exceed theoretical predictions
+- The deviation increases with streak length
+- The trimmed mean closely follows the median, suggesting symmetric distribution
+- For longer streaks (n>15), the actual number of flips required is significantly higher than predicted
+
+#### 4.3 Focused Analysis (n=1 to 10)
+![Trimmed Comparison n10](results/results_20250419_trimmed/trimmed_comparison_n10.png)
+A focused view of shorter streak lengths shows:
+- Better alignment with theoretical predictions for small n
+- Early emergence of deviation patterns
+- More precise visualization of the relationship for practical streak lengths
+
+#### 4.4 Extended Analysis (n=1 to 20)
+![Trimmed Comparison n20](results/results_20250419_trimmed/trimmed_comparison_n20.png)
+The extended analysis up to n=20 reveals:
+- Exponential growth in the deviation from theoretical predictions
+- Consistent underestimation by the theoretical model
+- Remarkable agreement between median and trimmed mean
+- Clear visualization of the increasing variance with streak length
 
 ### 5. Run Size Comparison
 We analyzed how different numbers of simulation runs affect the results:
@@ -145,3 +176,66 @@ This analysis demonstrates that while the theoretical expectation of 2^n provide
 - `results/results_20250419_10000/`: Directory containing 10000 runs analysis
 - `results/results_20250419_progressive/`: Directory containing progressive analysis results
 - Various PNG files containing the plots 
+
+## Scripts and Usage
+
+The project contains several Python scripts for different types of analysis:
+
+### 1. Basic Analysis Script
+`analyze_streak_results.py`: Analyzes simulation results and generates basic visualizations.
+```bash
+python analyze_streak_results.py
+```
+This script will:
+- Load the latest CSV files from the results directories
+- Generate individual runs, median, combined, and trimmed plots
+- Save plots for both n=10 and n=20 streak lengths
+- Create separate analyses for 100 and 1000 run datasets
+
+### 2. Progressive Analysis Script
+`run_progressive_analysis.py`: Performs an incremental analysis to study how the number of runs affects results.
+```bash
+python run_progressive_analysis.py
+```
+This script will:
+- Run simulations with increasing numbers of runs (1 to 100)
+- Track how results change with more runs
+- Generate plots showing:
+  - Absolute difference from theoretical values
+  - Percentage difference from theoretical values
+- Save detailed statistics in CSV format
+
+### Running Order
+For a complete analysis, run the scripts in this order:
+1. First run the progressive analysis:
+   ```bash
+   python run_progressive_analysis.py
+   ```
+2. Then run the basic analysis:
+   ```bash
+   python analyze_streak_results.py
+   ```
+
+### Output Structure
+The scripts will create the following directory structure:
+```
+results/
+├── results_20250419_100/      # Basic analysis with 100 runs
+├── results_20250419_1000/     # Basic analysis with 1000 runs
+├── results_20250419_10000/    # Basic analysis with 10000 runs
+├── results_20250419_trimmed/  # Trimmed data analysis
+└── results_20250419_progressive/  # Progressive analysis results
+```
+
+### Dependencies
+Required Python packages:
+```
+numpy
+pandas
+matplotlib
+```
+
+Install dependencies using:
+```bash
+pip install numpy pandas matplotlib
+``` 
