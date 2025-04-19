@@ -33,9 +33,13 @@ ENV/
 
 # Results
 results/
-results_*/  # Exclude all old results directories
+results_20250417_*/  # Old results from April 17
+results_20250418_*/  # Old results from April 18
 !results_20250419/  # Keep the new results directory
-!results_20250419_trimmed/  # Keep the new trimmed results directory
+!results_20250419_100/  # Keep the 100 runs analysis
+!results_20250419_1000/  # Keep the 1000 runs analysis
+!results_20250419_10000/  # Keep the 10000 runs analysis
+!results_20250419_trimmed/  # Keep the trimmed analysis
 
 # Logs
 *.log
@@ -47,7 +51,7 @@ Thumbs.db
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# Results (only ignore large temporary files)
+# Temporary files
 *.tmp
 *.temp
 *.bak

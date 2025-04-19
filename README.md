@@ -10,13 +10,41 @@ Coin_statistics/
 ├── analyze_streak_results.py
 ├── analyze_trimmed_data.py
 ├── streak_simulation.py
+├── longest_streak_finder.py
+├── requirements.txt
 ├── results_20250419/
 │   ├── streak_simulation_results_005753.csv  # 100 runs
 │   ├── streak_simulation_results_005858.csv  # 1000 runs
 │   └── streak_simulation_results_010926.csv  # 10000 runs
+├── results_20250419_100/
+│   ├── individual_runs.png
+│   ├── median_plot.png
+│   ├── combined_plot.png
+│   ├── trimmed_plot.png
+│   ├── individual_runs_n10.png
+│   ├── median_plot_n10.png
+│   ├── combined_plot_n10.png
+│   └── trimmed_plot_n10.png
+├── results_20250419_1000/
+│   ├── individual_runs.png
+│   ├── median_plot.png
+│   ├── combined_plot.png
+│   ├── trimmed_plot.png
+│   ├── individual_runs_n10.png
+│   ├── median_plot_n10.png
+│   ├── combined_plot_n10.png
+│   └── trimmed_plot_n10.png
+├── results_20250419_10000/
+│   ├── individual_runs.png
+│   ├── median_plot.png
+│   ├── combined_plot.png
+│   ├── trimmed_plot.png
+│   ├── individual_runs_n10.png
+│   ├── median_plot_n10.png
+│   ├── combined_plot_n10.png
+│   └── trimmed_plot_n10.png
 └── results_20250419_trimmed/
     ├── trimmed_comparison.png
-    ├── trimmed_comparison_n10.png
     └── trimmed_analysis_summary.md
 ```
 
@@ -113,30 +141,77 @@ The analysis generates:
 
 ## Visual Analysis
 
-### Trimmed Data Analysis (Middle 96%)
+### 1. Full Dataset Analysis
+
+#### 100 Runs Analysis
+![Individual Runs (100)](results_20250419_100/individual_runs.png)
+![Median Plot (100)](results_20250419_100/median_plot.png)
+![Combined Plot (100)](results_20250419_100/combined_plot.png)
+![Trimmed Plot (100)](results_20250419_100/trimmed_plot.png)
+
+#### 1000 Runs Analysis
+![Individual Runs (1000)](results_20250419_1000/individual_runs.png)
+![Median Plot (1000)](results_20250419_1000/median_plot.png)
+![Combined Plot (1000)](results_20250419_1000/combined_plot.png)
+![Trimmed Plot (1000)](results_20250419_1000/trimmed_plot.png)
+
+#### 10000 Runs Analysis
+![Individual Runs (10000)](results_20250419_10000/individual_runs.png)
+![Median Plot (10000)](results_20250419_10000/median_plot.png)
+![Combined Plot (10000)](results_20250419_10000/combined_plot.png)
+![Trimmed Plot (10000)](results_20250419_10000/trimmed_plot.png)
+
+### 2. Zoomed Analysis (n=1 to 10)
+
+#### 100 Runs (Zoomed)
+![Individual Runs Zoomed (100)](results_20250419_100/individual_runs_n10.png)
+![Median Plot Zoomed (100)](results_20250419_100/median_plot_n10.png)
+![Combined Plot Zoomed (100)](results_20250419_100/combined_plot_n10.png)
+![Trimmed Plot Zoomed (100)](results_20250419_100/trimmed_plot_n10.png)
+
+#### 1000 Runs (Zoomed)
+![Individual Runs Zoomed (1000)](results_20250419_1000/individual_runs_n10.png)
+![Median Plot Zoomed (1000)](results_20250419_1000/median_plot_n10.png)
+![Combined Plot Zoomed (1000)](results_20250419_1000/combined_plot_n10.png)
+![Trimmed Plot Zoomed (1000)](results_20250419_1000/trimmed_plot_n10.png)
+
+#### 10000 Runs (Zoomed)
+![Individual Runs Zoomed (10000)](results_20250419_10000/individual_runs_n10.png)
+![Median Plot Zoomed (10000)](results_20250419_10000/median_plot_n10.png)
+![Combined Plot Zoomed (10000)](results_20250419_10000/combined_plot_n10.png)
+![Trimmed Plot Zoomed (10000)](results_20250419_10000/trimmed_plot_n10.png)
+
+### 3. Trimmed Data Analysis (Middle 96%)
 ![Trimmed Data Comparison](results_20250419_trimmed/trimmed_comparison.png)
 
-This plot shows the comparison between theoretical predictions and actual results for the middle 96% of the data (excluding the top and bottom 2% of outliers). Key observations:
+This comprehensive set of plots provides multiple perspectives on the relationship between streak length and required flips:
 
-1. **Theoretical vs. Actual Relationship**
-   - The black dashed line represents the theoretical prediction (2^n)
-   - The colored lines show the actual results for different sample sizes
-   - The deviation from theoretical values is more pronounced in the middle range of streak lengths
+1. **Individual Runs Plots**
+   - Show the raw data points for each simulation
+   - Demonstrate the variability in results
+   - Highlight the distribution of required flips
 
-2. **Sample Size Effects**
-   - 100 runs (blue line) shows more variability and higher values
-   - 1000 runs (red line) and 10000 runs (green line) show very similar patterns
-   - Larger sample sizes provide more stable and reliable estimates
+2. **Median Plots**
+   - Focus on the central tendency
+   - Remove the effect of outliers
+   - Provide a clearer view of the typical behavior
 
-3. **Key Features**
-   - The actual number of flips required is consistently higher than theoretical predictions
-   - The relationship becomes more linear in log scale for larger streak lengths
-   - The 10000-run analysis (green line) provides the most reliable trend
+3. **Combined Plots**
+   - Show all runs overlaid
+   - Illustrate the density of results
+   - Help identify patterns in the data
 
-4. **Practical Implications**
-   - The plot demonstrates the importance of using large sample sizes for accurate predictions
-   - The middle 96% of data provides a more realistic view of typical cases
-   - The consistent deviation from theoretical values suggests a need for modified theoretical models
+4. **Trimmed Plots**
+   - Focus on the middle 96% of data
+   - Remove extreme outliers
+   - Provide a more realistic view of typical cases
+
+5. **Zoomed Analysis**
+   - Focus on shorter streak lengths (1-10)
+   - Provide detailed view of the relationship
+   - Help identify patterns in the initial range
+
+The comparison across different sample sizes (100, 1000, and 10000 runs) shows how the results stabilize with larger datasets, while the trimmed analysis provides insights into the typical behavior of the system.
 
 ## Future Work
 - Investigate the mathematical basis for the observed deviations
