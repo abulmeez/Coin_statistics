@@ -44,33 +44,32 @@ Coin_statistics/
 
 ## Results Analysis
 
-### 1. Individual Runs (n=1 to 25)
+### 1. Individual Runs Analysis
 ![Individual Runs](results/results_20250419_100/individual_runs.png)
-This plot shows all simulation runs for each streak length. The light blue lines represent individual simulations, demonstrating the natural variation in the number of flips required to achieve each streak length.
+This plot shows all simulation runs for each streak length. The blue lines represent individual simulations, demonstrating the natural variation in the number of flips required.
 
-### 2. Median and Theoretical Comparison (n=1 to 25)
+### 2. Median and Theoretical Comparison
 ![Median Plot](results/results_20250419_100/median_plot.png)
 This plot compares:
-- The theoretical expectation (green dashed line): y = 2^n
-- The median of all simulations (red line)
+- The theoretical expectation (red dashed line): y = 2^n
+- The median of all simulations (blue line with markers)
 
-### 3. Combined View (n=1 to 25)
+### 3. Combined View
 ![Combined Plot](results/results_20250419_100/combined_plot.png)
-This plot shows all three elements together:
-- Individual simulation runs (light blue)
-- Median values (red)
-- Theoretical expectation (green dashed)
+This plot shows:
+- Mean flips required (blue line with error bars)
+- Theoretical expectation (red dashed)
+- Error bars showing standard deviation
 
 ### 4. Trimmed Analysis
 We performed two types of trimmed analysis to better understand the central tendencies in our data:
 
 #### 4.1 Basic Trimmed Analysis (90% of data)
 ![Trimmed Plot](results/results_20250419_100/trimmed_plot.png)
-This plot focuses on the central 90% of the data by:
-- Removing the 5% highest and 5% lowest values for each streak length
-- Showing the theoretical expectation (red dashed)
-- Showing the median (red)
-- Showing the trimmed mean (orange)
+This plot shows:
+- Trimmed mean (blue line with markers)
+- Theoretical expectation (red dashed)
+- Focuses on the central 90% of the data
 
 #### 4.2 Detailed Trimmed Analysis
 ![Trimmed Comparison](results/results_20250419_trimmed/trimmed_comparison.png)
@@ -83,7 +82,6 @@ The plot clearly shows that:
 - Both median and trimmed mean consistently exceed theoretical predictions
 - The deviation increases with streak length
 - The trimmed mean closely follows the median, suggesting symmetric distribution
-- For longer streaks (n>15), the actual number of flips required is significantly higher than predicted
 
 #### 4.3 Focused Analysis (n=1 to 10)
 ![Trimmed Comparison n10](results/results_20250419_trimmed/trimmed_comparison_n10.png)
@@ -98,46 +96,23 @@ The extended analysis up to n=20 reveals:
 - Exponential growth in the deviation from theoretical predictions
 - Consistent underestimation by the theoretical model
 - Remarkable agreement between median and trimmed mean
-- Clear visualization of the increasing variance with streak length
 
-### 5. Run Size Comparison
-We analyzed how different numbers of simulation runs affect the results:
-
-#### 100 vs 1000 vs 10000 Runs Comparison
-![Run Size Comparison](results/results_20250419_100/combined_plot.png)
-This plot compares the median number of flips required across different run sizes:
-- 100 runs (blue)
-- 1000 runs (orange)
-- 10000 runs (green)
-- Theoretical expectation (red dashed)
-
-The plot shows that:
-- Larger run sizes provide more stable estimates
-- The 1000 and 10000 run results are very similar
-- All run sizes show consistent deviation from theoretical predictions
-
-#### Percentage Difference by Run Size
-![Percentage Difference by Run Size](results/results_20250419_100/trimmed_plot.png)
-This plot shows the percentage difference from theoretical values for each run size:
-- 100 runs (blue)
-- 1000 runs (orange)
-- 10000 runs (green)
-
-Key observations:
-- All run sizes show consistent underestimation by the theoretical model
-- The percentage difference increases with streak length
-- Larger run sizes show more stable percentage differences
-
-### 6. Progressive Analysis
+### 5. Progressive Analysis
 We conducted a progressive analysis to understand how the number of simulation runs affects the accuracy of our results:
 
 #### Absolute Difference vs Number of Runs
 ![Absolute Difference](results/results_20250419_progressive/absolute_difference_vs_runs.png)
-This plot shows how the absolute difference between simulated and theoretical values changes as we increase the number of runs. The shaded area represents the standard deviation, showing the variation in results.
+This plot shows:
+- Mean absolute difference from theoretical values
+- Shaded area representing standard deviation
+- How the difference changes with increasing number of runs
 
 #### Percentage Difference vs Number of Runs
 ![Percentage Difference](results/results_20250419_progressive/percentage_difference_vs_runs.png)
-This plot shows the percentage difference between simulated and theoretical values as a function of the number of runs. The error bars indicate the standard deviation of the percentage differences.
+This plot shows:
+- Mean percentage difference from theoretical values
+- Error bars indicating standard deviation
+- Trend of differences as number of runs increases
 
 ## Key Findings
 
@@ -179,51 +154,55 @@ This analysis demonstrates that while the theoretical expectation of 2^n provide
 
 ## Scripts and Usage
 
-The project contains several Python scripts for different types of analysis:
+The project contains two main Python scripts:
 
-### 1. Basic Analysis Script
-`analyze_streak_results.py`: Analyzes simulation results and generates basic visualizations.
+### 1. Analysis Script
+`analyze_streak_results.py`: Main analysis and visualization script
 ```bash
 python analyze_streak_results.py
 ```
-This script will:
-- Load the latest CSV files from the results directories
-- Generate individual runs, median, combined, and trimmed plots
-- Save plots for both n=10 and n=20 streak lengths
-- Create separate analyses for 100 and 1000 run datasets
+This script:
+- Loads CSV files from the results directories
+- Generates four types of plots:
+  - Individual runs analysis
+  - Median comparison
+  - Combined view with error bars
+  - Trimmed analysis
+- Creates plots for different streak ranges (n=10 and n=20)
 
 ### 2. Progressive Analysis Script
-`run_progressive_analysis.py`: Performs an incremental analysis to study how the number of runs affects results.
+`run_progressive_analysis.py`: Progressive simulation analysis
 ```bash
 python run_progressive_analysis.py
 ```
-This script will:
-- Run simulations with increasing numbers of runs (1 to 100)
-- Track how results change with more runs
-- Generate plots showing:
+This script:
+- Performs simulations with increasing run counts
+- Analyzes how results stabilize with more runs
+- Generates two main plots:
   - Absolute difference from theoretical values
   - Percentage difference from theoretical values
-- Save detailed statistics in CSV format
+- Saves comprehensive statistics in CSV format
 
-### Running Order
-For a complete analysis, run the scripts in this order:
-1. First run the progressive analysis:
+### Running the Analysis
+For a complete analysis:
+1. Run the progressive analysis:
    ```bash
    python run_progressive_analysis.py
    ```
-2. Then run the basic analysis:
+   This creates the progressive analysis results.
+
+2. Run the main analysis:
    ```bash
    python analyze_streak_results.py
    ```
+   This generates all visualization plots.
 
-### Output Structure
-The scripts will create the following directory structure:
+### Output Directory Structure
 ```
 results/
-├── results_20250419_100/      # Basic analysis with 100 runs
-├── results_20250419_1000/     # Basic analysis with 1000 runs
-├── results_20250419_10000/    # Basic analysis with 10000 runs
-├── results_20250419_trimmed/  # Trimmed data analysis
+├── results_20250419_100/      # Basic analysis results
+├── results_20250419_1000/     # Extended analysis results
+├── results_20250419_trimmed/  # Trimmed analysis results
 └── results_20250419_progressive/  # Progressive analysis results
 ```
 
@@ -235,7 +214,7 @@ pandas
 matplotlib
 ```
 
-Install dependencies using:
+Install using:
 ```bash
 pip install numpy pandas matplotlib
 ``` 
