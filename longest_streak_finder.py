@@ -26,7 +26,7 @@ def flip_until_streak_numpy(streak_target):
 
     return total_flips
 
-def run_multiple_simulations(num_runs=1000, max_streak=20):
+def run_multiple_simulations(num_runs=10000, max_streak=20):
     # Create results directory with today's date
     today = datetime.now().strftime("%Y%m%d")
     results_dir = f"results_{today}"
@@ -44,21 +44,25 @@ def run_multiple_simulations(num_runs=1000, max_streak=20):
         
         # Run multiple simulations
         for run in range(1, num_runs + 1):
-            print(f"\nRun {run}:")
+            #print(f"\nRun {run}:")
             for streak_target in range(1, max_streak + 1):
                 total_flips = flip_until_streak_numpy(streak_target)
-                print(f"Streak of {streak_target}: {total_flips:,} flips")
+                #print(f"Streak of {streak_target}: {total_flips:,} flips")
                 writer.writerow([run, streak_target, total_flips])
     
-    print(f"\nResults have been saved to {filename}")
+    #print(f"\nResults have been saved to {filename}")
     return results_dir
 
 # Run the simulations
 if __name__ == "__main__":
     # Run 100 simulations
-    print("Running 100 simulations...")
+    #print("Running 100 simulations...")
     results_dir_100 = run_multiple_simulations(num_runs=100, max_streak=20)
     
     # Run 1000 simulations
-    print("\nRunning 1000 simulations...")
+    #print("\nRunning 1000 simulations...")
     results_dir_1000 = run_multiple_simulations(num_runs=1000, max_streak=20) 
+
+    # Run 10000 simulations
+    #print("\nRunning 10000 simulations...")
+    results_dir_10000 = run_multiple_simulations(num_runs=10000, max_streak=20) 

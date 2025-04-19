@@ -21,10 +21,8 @@ wheels/
 *.egg
 
 # Virtual Environment
-.env
-.venv
-env/
 venv/
+env/
 ENV/
 
 # IDE
@@ -32,6 +30,15 @@ ENV/
 .vscode/
 *.swp
 *.swo
+
+# Results
+results/
+results_*/  # Exclude all old results directories
+!results_20250419/  # Keep the new results directory
+!results_20250419_trimmed/  # Keep the new trimmed results directory
+
+# Logs
+*.log
 
 # OS
 .DS_Store
@@ -47,8 +54,6 @@ Thumbs.db
 *.backup
 
 # Keep these
-!results/
-!results_*/
 !*.png
 !*.csv
 !*.md 

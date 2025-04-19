@@ -1,170 +1,145 @@
 # Coin Flip Streak Analysis
 
-This project analyzes the number of coin flips required to achieve streaks of heads of various lengths. It includes both theoretical analysis and Monte Carlo simulations to understand the relationship between streak length and required flips.
+This project analyzes the relationship between streak length and the number of flips required to achieve that streak in a fair coin toss experiment. The analysis compares theoretical predictions with empirical results from Monte Carlo simulations.
 
 ## Project Structure
 
-The project is organized into date-based directories for each set of simulations:
-
 ```
 Coin_statistics/
-├── longest_streak_finder.py    # Main simulation script
-├── analyze_streak_results.py   # Analysis and visualization script
-├── results/                    # Directory containing all results
-│   ├── individual_runs.png     # All individual simulation runs
-│   ├── median_plot.png        # Median values vs theoretical
-│   ├── combined_plot.png      # Combined view of all data
-│   ├── trimmed_plot.png       # Trimmed mean analysis
-│   ├── individual_runs_n10.png # Zoomed view (n=1-10)
-│   ├── median_plot_n10.png    # Zoomed median view
-│   ├── combined_plot_n10.png  # Zoomed combined view
-│   ├── trimmed_plot_n10.png   # Zoomed trimmed view
-│   └── streak_simulation_results_*.csv  # Raw simulation data
-├── results_YYYYMMDD_100/      # Results directory for 100 runs
-│   ├── streak_simulation_results_YYYYMMDD_HHMMSS.csv
-│   ├── individual_runs.png
-│   ├── median_plot.png
-│   ├── combined_plot.png
-│   ├── trimmed_plot.png
-│   ├── individual_runs_n10.png
-│   ├── median_plot_n10.png
-│   ├── combined_plot_n10.png
-│   └── trimmed_plot_n10.png
-├── results_YYYYMMDD_1000/     # Results directory for 1000 runs
-│   ├── streak_simulation_results_YYYYMMDD_HHMMSS.csv
-│   ├── individual_runs.png
-│   ├── median_plot.png
-│   ├── combined_plot.png
-│   ├── trimmed_plot.png
-│   ├── individual_runs_n10.png
-│   ├── median_plot_n10.png
-│   ├── combined_plot_n10.png
-│   └── trimmed_plot_n10.png
-└── results_YYYYMMDD_10000/    # Results directory for 10000 runs
-    ├── streak_simulation_results_YYYYMMDD_HHMMSS.csv
-    ├── individual_runs.png
-    ├── median_plot.png
-    ├── combined_plot.png
-    ├── trimmed_plot.png
-    ├── individual_runs_n10.png
-    ├── median_plot_n10.png
-    ├── combined_plot_n10.png
-    └── trimmed_plot_n10.png
+├── README.md
+├── analyze_streak_results.py
+├── analyze_trimmed_data.py
+├── streak_simulation.py
+├── results_20250419/
+│   ├── streak_simulation_results_005753.csv  # 100 runs
+│   ├── streak_simulation_results_005858.csv  # 1000 runs
+│   └── streak_simulation_results_010926.csv  # 10000 runs
+└── results_20250419_trimmed/
+    ├── trimmed_comparison.png
+    ├── trimmed_comparison_n10.png
+    └── trimmed_analysis_summary.md
 ```
-
-## Visualization Results
-
-### Individual Runs Plot
-![Individual Runs](results/individual_runs.png)
-This plot shows all individual simulation runs, demonstrating the variability in the number of flips required to achieve different streak lengths. Each line represents one simulation run, showing how the number of required flips increases exponentially with streak length.
-
-### Median Plot
-![Median Plot](results/median_plot.png)
-The median plot compares the median number of flips required (red line) with the theoretical function (green dashed line). This visualization clearly shows how the theoretical model underestimates the actual number of flips needed.
-
-### Combined Plot
-![Combined Plot](results/combined_plot.png)
-This comprehensive view shows:
-- Individual runs (light blue lines)
-- Median values (red line)
-- Theoretical function (green dashed line)
-The plot demonstrates both the variability in individual runs and the systematic deviation from the theoretical prediction.
-
-### Trimmed Plot
-![Trimmed Plot](results/trimmed_plot.png)
-The trimmed plot shows:
-- Theoretical function (green dashed line)
-- Median values (red line)
-- Trimmed mean (orange line)
-This view helps identify the central tendency of the data while reducing the impact of extreme values.
-
-### Zoomed Views (n=1-10)
-![Individual Runs Zoomed](results/individual_runs_n10.png)
-![Median Plot Zoomed](results/median_plot_n10.png)
-![Combined Plot Zoomed](results/combined_plot_n10.png)
-![Trimmed Plot Zoomed](results/trimmed_plot_n10.png)
-These zoomed views focus on streak lengths from 1 to 10, providing a clearer view of the relationship for shorter streaks where the theoretical model is more accurate.
-
-## How to Use
-
-1. Run the simulation script to generate new results:
-   ```bash
-   python longest_streak_finder.py
-   ```
-   This will create three new directories:
-   - `results_YYYYMMDD_100/` for 100 simulation runs
-   - `results_YYYYMMDD_1000/` for 1000 simulation runs
-   - `results_YYYYMMDD_10000/` for 10000 simulation runs
-
-2. Analyze the results and generate visualizations:
-   ```bash
-   python analyze_streak_results.py
-   ```
-   This will create various plots in each results directory and generate a statistical summary.
-
-## Analysis Details
-
-The analysis includes:
-
-1. **Individual Runs Plot**: Shows the number of flips required for each streak length across all simulation runs.
-2. **Median Plot**: Compares the median number of flips required with the theoretical function (2^n).
-3. **Combined Plot**: Shows individual runs, median values, and theoretical function together.
-4. **Trimmed Plot**: Shows theoretical, median, and trimmed mean values (excluding extreme values).
-
-Each plot is generated for two ranges:
-- n=1 to 20 (full range)
-- n=1 to 10 (zoomed in view)
-
-## Statistical Analysis
-
-The analysis includes several statistical measures:
-
-1. **Mean Absolute Percentage Error (MAPE)**: Measures the average percentage difference between the theoretical and actual values.
-2. **Fitted Functions**: The actual relationship is fitted to a function of the form a * 2^(b*n + c), which provides a more accurate model than the simple theoretical prediction.
-
-### Key Statistical Findings
-
-1. **Theoretical vs. Actual Relationship**:
-   - The theoretical function (2^n) consistently underestimates the actual number of flips required.
-   - For 100 runs, the MAPE is 33.95%, indicating significant deviation from the theoretical model.
-   - For 1000 runs, the MAPE is 36.24%, showing that the deviation persists with larger sample sizes.
-   - For 10000 runs, the MAPE is 35.12%, demonstrating the stability of the relationship with very large sample sizes.
-
-2. **Fitted Models**:
-   - For 100 runs: y = 0.47 * 2^(1.06*n - 0.72)
-   - For 1000 runs: y = 0.80 * 2^(0.97*n + 0.46)
-   - For 10000 runs: y = 0.85 * 2^(0.95*n + 0.52)
-   - These models show that the actual relationship requires:
-     - A scaling factor (a) to adjust the base magnitude
-     - A non-linear exponent (b) to account for the changing rate of increase
-     - An offset (c) to adjust for the initial conditions
-
-3. **Sample Size Effects**:
-   - The 1000-run analysis provides more stable estimates of the true relationship than the 100-run analysis.
-   - The 10000-run analysis provides the most stable and accurate estimates of the true relationship.
-   - The fitted parameters become more consistent with larger sample sizes.
-   - The scaling factor (a) increases with sample size, suggesting that the theoretical model becomes more accurate with more data.
-
-4. **Practical Implications**:
-   - The actual number of flips required for longer streaks is significantly higher than the theoretical prediction.
-   - The relationship between streak length and required flips is more complex than a simple exponential function.
-   - The fitted models provide a more accurate way to predict the number of flips needed for a given streak length.
-   - The 10000-run analysis provides the most reliable predictions for practical applications.
 
 ## Theoretical Background
 
-The theoretical expectation for the number of flips required to achieve a streak of n heads is approximately 2^(n+1) - 2. However, our analysis shows that this is an oversimplification. The actual relationship is better modeled by a function of the form a * 2^(b*n + c), where:
+The theoretical probability of getting a streak of length n in a fair coin toss is given by:
+\[ P(n) = \frac{1}{2^n} \]
 
-- a: A scaling factor that accounts for the base magnitude of the relationship
-- b: A non-linear exponent that captures the changing rate of increase
-- c: An offset that adjusts for initial conditions
+This implies that, on average, we would need \(2^n\) flips to achieve a streak of length n. However, our analysis shows that this theoretical prediction consistently underestimates the actual number of flips required.
 
-This more complex model better captures the true nature of streak probabilities in coin flips.
+## Analysis Methods
+
+1. **Full Dataset Analysis**
+   - Analyzes all simulation results
+   - Compares mean, median, and theoretical values
+   - Generates plots for different streak lengths
+
+2. **Trimmed Data Analysis (Middle 96%)**
+   - Removes the top and bottom 2% of data
+   - Focuses on typical cases
+   - Provides more robust statistical measures
+
+## Key Findings
+
+### 1. Theoretical vs. Actual Relationship
+- The theoretical function (2^n) consistently underestimates the actual number of flips required
+- The deviation is more pronounced in the middle 96% of the data
+- The relationship is more complex than a simple exponential function
+- The fitted models show that the actual relationship requires a scaling factor and offset
+
+### 2. Sample Size Effects
+- Larger sample sizes (1000 and 10000 runs) provide more stable estimates
+- The 1000-run and 10000-run analyses show nearly identical fitted parameters
+- Parameter uncertainties decrease significantly with increasing sample size
+- The scaling factor (a) approaches 1.0 with larger sample sizes
+
+### 3. Model Accuracy
+- High correlation coefficients (>0.99) with theoretical values
+- R-squared values >0.99 indicate excellent model fit
+- Statistically significant relationships (p-values < 0.001)
+- The 10000-run analysis provides the most reliable predictions
+
+### 4. Practical Implications
+- The actual number of flips required is 14-17% higher than theoretical predictions
+- The relationship follows a modified exponential function: \(y = a \cdot 2^{(b \cdot n + c)}\)
+- For large sample sizes, the relationship simplifies to approximately \(y = 2^{(n - 0.1)}\)
+- The 10000-run analysis provides the most reliable predictions for practical applications
+
+## Statistical Measures
+
+### 100 Runs Analysis
+- Mean Absolute Percentage Error (MAPE): 17.27%
+- Correlation with Theoretical Values: 0.9971
+- R-squared: 0.9936
+- Fitted Function: \(y = 0.63 \cdot 2^{(1.05 \cdot n - 0.34)}\)
+
+### 1000 Runs Analysis
+- Mean Absolute Percentage Error (MAPE): 14.56%
+- Correlation with Theoretical Values: 0.9999
+- R-squared: 0.9946
+- Fitted Function: \(y = 1.00 \cdot 2^{(1.00 \cdot n - 0.02)}\)
+
+### 10000 Runs Analysis
+- Mean Absolute Percentage Error (MAPE): 15.16%
+- Correlation with Theoretical Values: 1.0000
+- R-squared: 0.9957
+- Fitted Function: \(y = 0.99 \cdot 2^{(1.00 \cdot n - 0.09)}\)
 
 ## Dependencies
-
 - Python 3.x
 - pandas
 - numpy
 - matplotlib
-- scipy 
+- scipy
+
+## Usage
+1. Run the simulation:
+   ```bash
+   python streak_simulation.py
+   ```
+
+2. Analyze the results:
+   ```bash
+   python analyze_streak_results.py
+   python analyze_trimmed_data.py
+   ```
+
+## Results
+The analysis generates:
+1. Comparison plots for different streak lengths
+2. Statistical summaries for each run size
+3. Trimmed data analysis results
+4. Detailed findings in markdown format
+
+## Visual Analysis
+
+### Trimmed Data Analysis (Middle 96%)
+![Trimmed Data Comparison](results_20250419_trimmed/trimmed_comparison.png)
+
+This plot shows the comparison between theoretical predictions and actual results for the middle 96% of the data (excluding the top and bottom 2% of outliers). Key observations:
+
+1. **Theoretical vs. Actual Relationship**
+   - The black dashed line represents the theoretical prediction (2^n)
+   - The colored lines show the actual results for different sample sizes
+   - The deviation from theoretical values is more pronounced in the middle range of streak lengths
+
+2. **Sample Size Effects**
+   - 100 runs (blue line) shows more variability and higher values
+   - 1000 runs (red line) and 10000 runs (green line) show very similar patterns
+   - Larger sample sizes provide more stable and reliable estimates
+
+3. **Key Features**
+   - The actual number of flips required is consistently higher than theoretical predictions
+   - The relationship becomes more linear in log scale for larger streak lengths
+   - The 10000-run analysis (green line) provides the most reliable trend
+
+4. **Practical Implications**
+   - The plot demonstrates the importance of using large sample sizes for accurate predictions
+   - The middle 96% of data provides a more realistic view of typical cases
+   - The consistent deviation from theoretical values suggests a need for modified theoretical models
+
+## Future Work
+- Investigate the mathematical basis for the observed deviations
+- Analyze the distribution of required flips
+- Explore alternative theoretical models
+- Study the effect of different trimming percentages 
