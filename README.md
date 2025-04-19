@@ -1,4 +1,125 @@
-# Coin Flip Streak Analysis
+# Coin Flip Analysis
+
+This project consists of two main analyses:
+
+1. **Probability Convergence Analysis**: Investigating how the probability of heads converges to 0.5 as the number of flips increases, and analyzing the exact probability of getting exactly 50% heads for even numbers of flips.
+
+2. **Streak Length Analysis**: Investigating the probability of getting consecutive heads or tails in a series of coin flips, analyzing how many flips are required on average to achieve streaks of different lengths.
+
+## Project Structure
+
+```
+Coin_statistics/
+├── analyze_streak_results.py    # Streak analysis and visualization script
+├── run_progressive_analysis.py  # Progressive simulation script
+├── probability_convergence.py   # Probability convergence analysis script
+├── results/
+│   ├── probability_convergence_20250419_193105/  # Probability convergence results
+│   │   ├── comprehensive_analysis.png
+│   │   ├── combined_analysis.png
+│   │   ├── even_flips_exact_probability.png
+│   │   ├── empirical_convergence.png
+│   │   ├── empirical_exact_probability.png
+│   │   ├── convergence_stats.csv
+│   │   ├── convergence_full.csv
+│   │   ├── statistical_analysis.md
+│   │   └── comprehensive_analysis.md
+│   ├── results_20250419_100/    # 100 runs streak analysis
+│   │   └── ... (streak analysis files)
+│   ├── results_20250419_1000/   # 1000 runs streak analysis
+│   │   └── ... (streak analysis files)
+│   ├── results_20250419_10000/  # 10000 runs streak analysis
+│   │   └── ... (streak analysis files)
+│   └── results_20250419_progressive/  # Progressive streak analysis
+│       └── ... (progressive analysis files)
+└── README.md
+```
+
+## Part 1: Probability Convergence Analysis
+
+### The Riddle
+
+Consider this question: If you have a fair coin, how many flips would you choose to maximize your odds of getting exactly the same number of heads and tails? Would you choose 100, 1000, or even 1,000,000 flips?
+
+The answer might surprise you: it's 2 flips. While this might seem counterintuitive at first, this analysis will demonstrate why this is the case and how the probability of getting exactly 50% heads behaves as the number of flips increases.
+
+### Methodology
+
+1. **Simulation Process**:
+   - Run 100,000 simulations for each number of flips (2 to 100)
+   - Calculate the proportion of heads for each simulation
+   - Analyze both standard deviation convergence and exact 50% probability
+
+2. **Theoretical Background**:
+   - Standard deviation should follow σ = 1/(2√n)
+   - Exact 50% probability for even flips follows P(50%) = C(n,n/2) * (1/2)^n
+
+### Results Analysis
+
+#### 1. Standard Deviation Convergence
+![Empirical Convergence](results/probability_convergence_20250419_193105/empirical_convergence.png)
+
+The analysis shows remarkable agreement between empirical and theoretical results:
+- Empirical function: σ = 0.5006n^-0.5005
+- Theoretical function: σ = 1/(2√n)
+- MAPE: 0.16%
+- RMSE: 0.0002
+- Power law exponent deviation: 0.0005 from theoretical -0.5
+
+#### 2. Exact 50% Probability
+![Even Flips Exact Probability](results/probability_convergence_20250419_193105/even_flips_exact_probability.png)
+
+For even numbers of flips:
+- Empirical function: P(50%) = 0.4086e^(-0.0856n) + 0.0972
+- Theoretical function: P(50%) = C(n,n/2) * (1/2)^n
+- MAPE: 0.64%
+- RMSE: 0.0010
+
+#### 3. Comprehensive Analysis
+![Comprehensive Analysis](results/probability_convergence_20250419_193105/comprehensive_analysis.png)
+
+The comprehensive analysis combines both measures:
+- Top subplot: Standard deviation convergence with empirical data (blue), theoretical prediction (red dashed), and fitted power law (green dotted)
+- Bottom subplot: Exact 50% probability with similar color coding
+
+### Key Findings
+
+1. **Standard Deviation Convergence**:
+   - The empirical power law exponent (-0.5005) closely matches the theoretical -0.5
+   - The empirical coefficient (0.5006) is very close to the theoretical 0.5
+   - The convergence follows the theoretical 1/2√n relationship with high precision
+
+2. **Exact 50% Probability**:
+   - The probability follows an exponential decay plus offset
+   - The decay rate (0.0856) indicates how quickly the probability approaches the asymptotic value
+   - The empirical results closely match theoretical predictions
+
+### Conclusion: Why 2 Flips is Optimal
+
+Our analysis reveals a fascinating insight about coin flips:
+
+1. **Maximum Probability at 2 Flips**:
+   - For 2 flips, the probability of getting exactly 1 head and 1 tail is 0.5 (50%)
+   - This is the highest probability of getting exactly 50% heads for any number of flips
+
+2. **Probability Decay**:
+   - As shown in our analysis, the probability of getting exactly 50% heads follows an exponential decay
+   - The empirical function P(50%) = 0.4086e^(-0.0856n) + 0.0972 shows this decay
+   - For larger numbers of flips, the probability of getting exactly 50% heads becomes increasingly small
+
+3. **Two Different Convergences**:
+   - The proportion of heads converges to 0.5 as n approaches infinity (Law of Large Numbers)
+   - However, the probability of getting exactly 50% heads converges to 0 as n approaches infinity
+   - This is because the number of possible outcomes increases exponentially, making exact 50% increasingly rare
+
+4. **Mathematical Explanation**:
+   - For 2 flips, there are only 4 possible outcomes (HH, HT, TH, TT)
+   - Two of these (HT, TH) give exactly 50% heads, hence P = 0.5
+   - For larger n, the number of outcomes that give exactly 50% heads becomes a vanishingly small fraction of all possible outcomes
+
+This explains why 2 flips is the optimal choice for maximizing the chance of getting exactly 50% heads, even though the proportion of heads converges to 0.5 in the long run.
+
+## Part 2: Streak Length Analysis
 
 This project investigates the probability of getting consecutive heads or tails in a series of coin flips. We analyze how many flips are required on average to achieve streaks of different lengths, comparing actual simulation results with theoretical expectations.
 
@@ -154,7 +275,7 @@ This analysis demonstrates that while the theoretical expectation of 2^n provide
 
 ## Scripts and Usage
 
-The project contains two main Python scripts:
+The project contains three main Python scripts:
 
 ### 1. Analysis Script
 `analyze_streak_results.py`: Main analysis and visualization script
@@ -183,6 +304,34 @@ This script:
   - Percentage difference from theoretical values
 - Saves comprehensive statistics in CSV format
 
+### 3. Equal Probability Analysis Script
+`exact_half_probability.py`: Analyzes probability of getting equal heads and tails
+```bash
+python exact_half_probability.py --runs 10000 --max_flips 20
+```
+This script:
+- Simulates coin flip sequences of varying even lengths
+- Calculates probability of getting exactly half heads
+- Compares empirical results with theoretical probabilities
+- Saves detailed sequence data to CSV
+- Parameters:
+  - `--runs`: Number of simulations (default: 10000)
+  - `--max_flips`: Maximum sequence length, must be even (default: 20)
+
+Example output:
+```
+Empirical Probabilities of Equal Heads and Tails:
+--------------------------------------------------
+ Flips | Probability | Theoretical
+--------------------------------------------------
+     2 |     0.5012 |     0.5000
+     4 |     0.3756 |     0.3750
+     6 |     0.3126 |     0.3125
+     8 |     0.2734 |     0.2734
+    10 |     0.2461 |     0.2461
+    ...
+```
+
 ### Running the Analysis
 For a complete analysis:
 1. Run the progressive analysis:
@@ -197,13 +346,20 @@ For a complete analysis:
    ```
    This generates all visualization plots.
 
+3. Run the equal probability analysis:
+   ```bash
+   python exact_half_probability.py
+   ```
+   This analyzes the probability of equal heads and tails.
+
 ### Output Directory Structure
 ```
 results/
 ├── results_20250419_100/      # Basic analysis results
 ├── results_20250419_1000/     # Extended analysis results
 ├── results_20250419_trimmed/  # Trimmed analysis results
-└── results_20250419_progressive/  # Progressive analysis results
+├── results_20250419_progressive/  # Progressive analysis results
+└── equal_heads_tails_*.csv    # Equal probability analysis results
 ```
 
 ### Dependencies
