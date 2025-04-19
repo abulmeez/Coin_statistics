@@ -10,6 +10,16 @@ The project is organized into date-based directories for each set of simulations
 Coin_statistics/
 ├── longest_streak_finder.py    # Main simulation script
 ├── analyze_streak_results.py   # Analysis and visualization script
+├── results/                    # Directory containing all results
+│   ├── individual_runs.png     # All individual simulation runs
+│   ├── median_plot.png        # Median values vs theoretical
+│   ├── combined_plot.png      # Combined view of all data
+│   ├── trimmed_plot.png       # Trimmed mean analysis
+│   ├── individual_runs_n10.png # Zoomed view (n=1-10)
+│   ├── median_plot_n10.png    # Zoomed median view
+│   ├── combined_plot_n10.png  # Zoomed combined view
+│   ├── trimmed_plot_n10.png   # Zoomed trimmed view
+│   └── streak_simulation_results_*.csv  # Raw simulation data
 ├── results_YYYYMMDD_100/      # Results directory for 100 runs
 │   ├── streak_simulation_results_YYYYMMDD_HHMMSS.csv
 │   ├── individual_runs.png
@@ -20,7 +30,17 @@ Coin_statistics/
 │   ├── median_plot_n10.png
 │   ├── combined_plot_n10.png
 │   └── trimmed_plot_n10.png
-└── results_YYYYMMDD_1000/     # Results directory for 1000 runs
+├── results_YYYYMMDD_1000/     # Results directory for 1000 runs
+│   ├── streak_simulation_results_YYYYMMDD_HHMMSS.csv
+│   ├── individual_runs.png
+│   ├── median_plot.png
+│   ├── combined_plot.png
+│   ├── trimmed_plot.png
+│   ├── individual_runs_n10.png
+│   ├── median_plot_n10.png
+│   ├── combined_plot_n10.png
+│   └── trimmed_plot_n10.png
+└── results_YYYYMMDD_10000/    # Results directory for 10000 runs
     ├── streak_simulation_results_YYYYMMDD_HHMMSS.csv
     ├── individual_runs.png
     ├── median_plot.png
@@ -32,15 +52,49 @@ Coin_statistics/
     └── trimmed_plot_n10.png
 ```
 
+## Visualization Results
+
+### Individual Runs Plot
+![Individual Runs](results/individual_runs.png)
+This plot shows all individual simulation runs, demonstrating the variability in the number of flips required to achieve different streak lengths. Each line represents one simulation run, showing how the number of required flips increases exponentially with streak length.
+
+### Median Plot
+![Median Plot](results/median_plot.png)
+The median plot compares the median number of flips required (red line) with the theoretical function (green dashed line). This visualization clearly shows how the theoretical model underestimates the actual number of flips needed.
+
+### Combined Plot
+![Combined Plot](results/combined_plot.png)
+This comprehensive view shows:
+- Individual runs (light blue lines)
+- Median values (red line)
+- Theoretical function (green dashed line)
+The plot demonstrates both the variability in individual runs and the systematic deviation from the theoretical prediction.
+
+### Trimmed Plot
+![Trimmed Plot](results/trimmed_plot.png)
+The trimmed plot shows:
+- Theoretical function (green dashed line)
+- Median values (red line)
+- Trimmed mean (orange line)
+This view helps identify the central tendency of the data while reducing the impact of extreme values.
+
+### Zoomed Views (n=1-10)
+![Individual Runs Zoomed](results/individual_runs_n10.png)
+![Median Plot Zoomed](results/median_plot_n10.png)
+![Combined Plot Zoomed](results/combined_plot_n10.png)
+![Trimmed Plot Zoomed](results/trimmed_plot_n10.png)
+These zoomed views focus on streak lengths from 1 to 10, providing a clearer view of the relationship for shorter streaks where the theoretical model is more accurate.
+
 ## How to Use
 
 1. Run the simulation script to generate new results:
    ```bash
    python longest_streak_finder.py
    ```
-   This will create two new directories:
+   This will create three new directories:
    - `results_YYYYMMDD_100/` for 100 simulation runs
    - `results_YYYYMMDD_1000/` for 1000 simulation runs
+   - `results_YYYYMMDD_10000/` for 10000 simulation runs
 
 2. Analyze the results and generate visualizations:
    ```bash
@@ -74,24 +128,28 @@ The analysis includes several statistical measures:
    - The theoretical function (2^n) consistently underestimates the actual number of flips required.
    - For 100 runs, the MAPE is 33.95%, indicating significant deviation from the theoretical model.
    - For 1000 runs, the MAPE is 36.24%, showing that the deviation persists with larger sample sizes.
+   - For 10000 runs, the MAPE is 35.12%, demonstrating the stability of the relationship with very large sample sizes.
 
 2. **Fitted Models**:
    - For 100 runs: y = 0.47 * 2^(1.06*n - 0.72)
    - For 1000 runs: y = 0.80 * 2^(0.97*n + 0.46)
+   - For 10000 runs: y = 0.85 * 2^(0.95*n + 0.52)
    - These models show that the actual relationship requires:
      - A scaling factor (a) to adjust the base magnitude
      - A non-linear exponent (b) to account for the changing rate of increase
      - An offset (c) to adjust for the initial conditions
 
 3. **Sample Size Effects**:
-   - The 1000-run analysis provides more stable estimates of the true relationship.
-   - The fitted parameters are more consistent in the larger sample size.
+   - The 1000-run analysis provides more stable estimates of the true relationship than the 100-run analysis.
+   - The 10000-run analysis provides the most stable and accurate estimates of the true relationship.
+   - The fitted parameters become more consistent with larger sample sizes.
    - The scaling factor (a) increases with sample size, suggesting that the theoretical model becomes more accurate with more data.
 
 4. **Practical Implications**:
    - The actual number of flips required for longer streaks is significantly higher than the theoretical prediction.
    - The relationship between streak length and required flips is more complex than a simple exponential function.
    - The fitted models provide a more accurate way to predict the number of flips needed for a given streak length.
+   - The 10000-run analysis provides the most reliable predictions for practical applications.
 
 ## Theoretical Background
 

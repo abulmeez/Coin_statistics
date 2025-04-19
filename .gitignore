@@ -4,7 +4,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
 build/
 develop-eggs/
 dist/
@@ -16,12 +15,15 @@ lib64/
 parts/
 sdist/
 var/
+wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 
 # Virtual Environment
-.venv/
+.env
+.venv
+env/
 venv/
 ENV/
 
@@ -31,6 +33,22 @@ ENV/
 *.swp
 *.swo
 
-# Project specific
-*.csv
-*.png 
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Results (only ignore large temporary files)
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Keep these
+!results/
+!results_*/
+!*.png
+!*.csv
+!*.md 
