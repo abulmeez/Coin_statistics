@@ -371,3 +371,37 @@ For a complete analysis:
    ```bash
    python run_progressive_analysis.py
    ```
+
+## Quick Start
+
+For a quick demonstration of the probability convergence analysis:
+```bash
+python probability_convergence.py --runs 1000 --max_flips 100
+```
+Expected runtime: ~30 seconds on a modern machine. This will generate all plots and analysis files in the `results/probability_convergence_*` directory.
+
+For the streak analysis:
+```bash
+python run_progressive_analysis.py --runs 1000
+```
+Expected runtime: ~2 minutes. Results will be saved in `results/results_*` directory.
+
+## Dependencies
+Required Python packages:
+```bash
+pip install numpy pandas matplotlib scipy
+```
+
+## Testing
+Run the unit tests to verify the mathematical calculations:
+```bash
+python -m unittest tests/test_probability_convergence.py
+```
+The tests verify:
+- Standard deviation convergence against theoretical values
+- Exact 50% probability calculations
+- Zero probability for odd numbers of flips
+- Asymptotic behavior for large n
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
