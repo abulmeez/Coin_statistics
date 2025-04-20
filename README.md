@@ -75,6 +75,39 @@ For even numbers of flips:
 - MAPE: 0.64%
 - RMSE: 0.0010
 
+#### 2.1 Detailed Probability Analysis
+![Empirical Probability](results/probability_convergence_20250419_193105/empirical_exact_probability.png)
+
+This fascinating graph shows the probability of getting exactly 50% heads across different numbers of flips. There are several key features to note:
+
+1. **Alternating Pattern**:
+   - The probability is zero for odd numbers of flips
+   - This is because it's impossible to get exactly 50% heads with an odd number of flips
+   - For example, with 3 flips, you can get 0, 1, 2, or 3 heads, but never 1.5 heads
+
+2. **Decreasing Peaks**:
+   - The highest probability (0.5) occurs at n=2 flips
+   - Each subsequent even number shows a lower probability
+   - This follows the binomial probability formula:
+     \[ P(X = \frac{n}{2}) = \binom{n}{n/2} \cdot (\frac{1}{2})^n \]
+   where:
+   - n is the number of flips (even only)
+   - \(\binom{n}{n/2}\) is the binomial coefficient (number of ways to choose n/2 items from n items)
+
+3. **Mathematical Explanation**:
+   - For n=2: P(1 head) = \(\binom{2}{1} \cdot (\frac{1}{2})^2 = 2 \cdot \frac{1}{4} = 0.5\)
+   - For n=4: P(2 heads) = \(\binom{4}{2} \cdot (\frac{1}{2})^4 = 6 \cdot \frac{1}{16} \approx 0.375\)
+   - For n=6: P(3 heads) = \(\binom{6}{3} \cdot (\frac{1}{2})^6 = 20 \cdot \frac{1}{64} \approx 0.3125\)
+
+4. **Asymptotic Behavior**:
+   - As n increases, the probability approaches zero
+   - This is because:
+     - The number of possible outcomes (2^n) grows exponentially
+     - While the number of favorable outcomes (\(\binom{n}{n/2}\)) grows more slowly
+     - The probability of each specific sequence ((\frac{1}{2})^n) decreases exponentially
+
+This graph perfectly illustrates why 2 flips gives the highest probability of getting exactly 50% heads, and why this probability becomes increasingly small for larger numbers of flips, even though the average proportion of heads converges to 0.5.
+
 #### 3. Comprehensive Analysis
 ![Comprehensive Analysis](results/probability_convergence_20250419_193105/comprehensive_analysis.png)
 
@@ -338,39 +371,3 @@ For a complete analysis:
    ```bash
    python run_progressive_analysis.py
    ```
-   This creates the progressive analysis results.
-
-2. Run the main analysis:
-   ```bash
-   python analyze_streak_results.py
-   ```
-   This generates all visualization plots.
-
-3. Run the equal probability analysis:
-   ```bash
-   python exact_half_probability.py
-   ```
-   This analyzes the probability of equal heads and tails.
-
-### Output Directory Structure
-```
-results/
-├── results_20250419_100/      # Basic analysis results
-├── results_20250419_1000/     # Extended analysis results
-├── results_20250419_trimmed/  # Trimmed analysis results
-├── results_20250419_progressive/  # Progressive analysis results
-└── equal_heads_tails_*.csv    # Equal probability analysis results
-```
-
-### Dependencies
-Required Python packages:
-```
-numpy
-pandas
-matplotlib
-```
-
-Install using:
-```bash
-pip install numpy pandas matplotlib
-``` 
